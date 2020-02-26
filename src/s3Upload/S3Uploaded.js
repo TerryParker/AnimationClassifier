@@ -38,7 +38,7 @@ class S3ImageUpload extends React.Component {
                     onChange={(e) => this.onChange(e)}
                     multiple
                 />
-                <button onClick={(e)=>this.handleClick(e)}>Update</button>
+                <button onClick={(e)=>this.handleClick(e)}>Updated</button>
             </div>
 
         )
