@@ -6,7 +6,7 @@ Amplify.configure(awsconfig);
 
 
 
-class Upload extends React.Component {
+class S3ImageUpload extends React.Component {
     constructor(props) {
         super(props);
         this.state = {files: []};
@@ -44,4 +44,4 @@ class Upload extends React.Component {
         )
     }
   }
-  export default Upload;
+  export default S3ImageUpload;
