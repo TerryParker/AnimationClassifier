@@ -15,9 +15,15 @@ class TableList extends Component {
   }
   componentDidMount() {
     Storage.list('')
-    .then(result => {console.log(result); this.setState({files: result})})
+    .then(result => {this.setState({files: result})})
     .catch(err => console.log(err));
 
+  }
+  handleClick(key) {
+    Storage.get(key)
+    .then(result => {window.open(result, '_blank');})
+    .catch(err => console.log(err));
+    
   }
   render() {
     return (
@@ -42,14 +48,18 @@ class TableList extends Component {
                       </thead>
                       <tbody>
                         {this.state.files.map((prop, key) => {
-                          console.log(prop.key)
-                          if (prop.key != "") {
+                          if (prop.key !== "") {
                             return (
                               <tr key={key}>
                                 <td>{prop.key}</td>
                                 <td>{prop.size}</td>
                                 <td key={key}>{prop.lastModified.toString()}</td>
+                                <td><button onClick={(e) => this.handleClick(prop.key)}>Download</button></td>
                               </tr>
+                            );
+                          }else{
+                            return(
+                              null
                             );
                           }
                         })}

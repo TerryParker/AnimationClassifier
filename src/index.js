@@ -10,7 +10,7 @@ import "./assets/css/demo.css";
 import "./assets/css/pe-icon-7-stroke.css";
 import AdminLayout from "./layouts/Admin.jsx";
 
-window.LOG_LEVEL='DEBUG';
+//window.LOG_LEVEL='DEBUG';
 ReactDOM.render(
   <BrowserRouter>
     <Switch>
