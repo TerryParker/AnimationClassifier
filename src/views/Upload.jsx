@@ -9,11 +9,21 @@ import { Card } from "../components/Card/Card.jsx";
 import Button from "../components/CustomButton/CustomButton.jsx";
 import Amplify, { Storage } from 'aws-amplify';
 import awsconfig from '../aws-exports';
+import { usePromiseTracker, trackPromise } from "react-promise-tracker";
+import Loader from 'react-loader-spinner';
 
 Amplify.configure(awsconfig);
 
 
 
+const LoadingIndicator = props => {
+  const { promiseInProgress } = usePromiseTracker();
+  
+  return (
+    promiseInProgress && 
+    <Loader type="ThreeDots" color="#2BAD60" height="100" width="100" />
+  );  
+}
 
 class Upload extends Component {
   constructor(props) {
@@ -27,23 +37,23 @@ class Upload extends Component {
       //Updates state once files are received
       const filesReceived = e.target.files;
       this.setState({files: filesReceived})
-      console.log(filesReceived)
   }
 
   handleClick() {
       //Uploads files once "Update" button is clicked
       var files = this.state.files
       //Loops through all files in file state
-      console.log(files)
       for (var i = 0; i < files.length; i++) {
           console.log(files[i]);
-          //This command puts the file into the S3 bucket 
-          Storage.put('file'+i+'.png', files[i])
-          .then (result => {
-            console.log(result);
-            this.setState({filesUploadedSuccesful: this.state.filesUploadedSuccesful.concat(result.key)});
-          })
-          .catch(err => console.log(err)); 
+          //This command puts the file into the S3 bucket
+          trackPromise( 
+            Storage.put('file'+i+'.png', files[i])
+            .then (result => {
+              console.log(result);
+              this.setState({filesUploadedSuccesful: this.state.filesUploadedSuccesful.concat(result.key)});
+            })
+            .catch(err => console.log(err)) 
+          );
       }
   }
   render() {
@@ -57,6 +67,7 @@ class Upload extends Component {
                 content={
                   <form>
                     <Row>
+                    <LoadingIndicator/>
                       <Col md={12}>
                         <FormGroup controlId="formControlsTextarea">
                         <input
@@ -72,7 +83,7 @@ class Upload extends Component {
                         </ul>
                       </Col>
                     </Row>
-                    <Button bsStyle="info" pullRight fill onClick={(e)=>this.handleClick(e)}>
+                    <Button bsstyle="info" pullRight fill onClick={(e)=>this.handleClick(e)}>
                       Upload File
                     </Button>
                     <div className="clearfix" />
