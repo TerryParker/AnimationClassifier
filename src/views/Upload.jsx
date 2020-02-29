@@ -18,7 +18,10 @@ Amplify.configure(awsconfig);
 class Upload extends Component {
   constructor(props) {
     super(props);
-    this.state = {files: []};
+    this.state = {
+      files: [],
+      filesUploadedSuccesful: []
+    };
   }
   onChange(e) {
       //Updates state once files are received
@@ -36,7 +39,10 @@ class Upload extends Component {
           console.log(files[i]);
           //This command puts the file into the S3 bucket 
           Storage.put('file'+i+'.png', files[i])
-          .then (result => console.log(result))
+          .then (result => {
+            console.log(result);
+            this.setState({filesUploadedSuccesful: this.state.filesUploadedSuccesful.concat(result.key)});
+          })
           .catch(err => console.log(err)); 
       }
   }
@@ -59,6 +65,11 @@ class Upload extends Component {
                             onChange={(e) => this.onChange(e)}
                         />
                         </FormGroup>
+                        <ul>
+                          {this.state.filesUploadedSuccesful.map((item, key) => {
+                            return(<li>Succesfully Uploaded {item}</li>)
+                          })}
+                        </ul>
                       </Col>
                     </Row>
                     <Button bsStyle="info" pullRight fill onClick={(e)=>this.handleClick(e)}>
