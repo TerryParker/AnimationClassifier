@@ -21,7 +21,7 @@ const LoadingIndicator = props => {
   
   return (
     promiseInProgress && 
-    <Loader type="ThreeDots" color="#2BAD60" height="100" width="100" />
+    <Loader type="ThreeDots" color="black" height="100" width="100" />
   );  
 }
 
@@ -67,8 +67,7 @@ class Upload extends Component {
                 content={
                   <form>
                     <Row>
-                    <LoadingIndicator/>
-                      <Col md={12}>
+                      <Col md={6}>
                         <FormGroup controlId="formControlsTextarea">
                         <input
                             type="file"
@@ -76,11 +75,15 @@ class Upload extends Component {
                             onChange={(e) => this.onChange(e)}
                         />
                         </FormGroup>
+                        
                         <ul>
                           {this.state.filesUploadedSuccesful.map((item, key) => {
                             return(<li>Succesfully Uploaded {item}</li>)
                           })}
                         </ul>
+                      </Col>
+                      <Col md={3}>
+                        <LoadingIndicator/>
                       </Col>
                     </Row>
                     <Button bsstyle="info" pullRight fill onClick={(e)=>this.handleClick(e)}>
