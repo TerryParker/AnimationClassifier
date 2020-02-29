@@ -63,7 +63,6 @@ class Upload extends Component {
           <Row>
             <Col md={12}>
               <Card
-                title="Edit Profile"
                 content={
                   <form>
                     <Row>
