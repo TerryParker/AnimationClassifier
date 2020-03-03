@@ -1,0 +1,15 @@
+{
+	"auth": {
+		"animationclassifier966329fa": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": []
+		}
+	},
+	"storage": {
+		"s390f3b64f": {
+			"service": "S3",
+			"providerPlugin": "awscloudformation"
+		}
+	}
+}

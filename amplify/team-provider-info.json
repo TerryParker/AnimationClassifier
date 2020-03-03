@@ -1,0 +1,20 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-animationclassifier-dev-181354-authRole",
+            "UnauthRoleArn": "arn:aws:iam::789968483738:role/amplify-animationclassifier-dev-181354-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::789968483738:role/amplify-animationclassifier-dev-181354-authRole",
+            "Region": "us-east-2",
+            "DeploymentBucketName": "amplify-animationclassifier-dev-181354-deployment",
+            "UnauthRoleName": "amplify-animationclassifier-dev-181354-unauthRole",
+            "StackName": "amplify-animationclassifier-dev-181354",
+            "StackId": "arn:aws:cloudformation:us-east-2:789968483738:stack/amplify-animationclassifier-dev-181354/df78f800-5ce3-11ea-8ed6-0ad7a569cb8c",
+            "AmplifyAppId": "d31ck4evj5jz4e"
+        },
+        "categories": {
+            "auth": {
+                "animationclassifier966329fa": {}
+            }
+        }
+    }
+}

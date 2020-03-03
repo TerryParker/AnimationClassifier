@@ -11,6 +11,7 @@ import Amplify, { Storage } from 'aws-amplify';
 import awsconfig from '../aws-exports';
 import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 import Loader from 'react-loader-spinner';
+import axios from 'axios';
 
 Amplify.configure(awsconfig);
 
@@ -42,15 +43,32 @@ class Upload extends Component {
   handleClick() {
       //Uploads files once "Update" button is clicked
       var files = this.state.files
-      //Loops through all files in file state
+      //Loops through all files in file statey
       for (var i = 0; i < files.length; i++) {
           console.log(files[i]);
           //This command puts the file into the S3 bucket
           trackPromise( 
             Storage.put('file'+i+'.png', files[i])
             .then (result => {
-              console.log(result);
+              //console.log(result);
               this.setState({filesUploadedSuccesful: this.state.filesUploadedSuccesful.concat(result.key)});
+              //Post result.key to lambda 
+              var key = { "name": result.key}
+              console.log(key)
+              axios({
+                method: 'post',
+                url: 'https://mnh5jsx02i.execute-api.us-east-2.amazonaws.com/dev/S3ImageRek',
+                crossdomain: true,
+                headers: {
+                  'Access-Control-Allow-Origin': '*',
+                },
+                data: key
+              })
+              .then((response) => {
+                console.log(response);
+              }, (error) => {
+                console.log(error);
+              });
             })
             .catch(err => console.log(err)) 
           );
