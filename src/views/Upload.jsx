@@ -49,6 +49,7 @@ class Upload extends Component {
             Storage.put('file'+i+'.png', files[i])
             .then (result => {
               //Post result.key to lambda 
+              trackPromise(
               axios.post('https://mnh5jsx02i.execute-api.us-east-2.amazonaws.com/dev/S3ImageRek', {'body':result.key}).then(response => {
                 console.log(response['data']['body']['Label'][0])
                 var name = response['data']['body']['Label'][0]['Name']
@@ -57,6 +58,7 @@ class Upload extends Component {
               }).catch(error => {
                 console.log(error.response)
               })
+              )
             })
             .catch(err => console.log(err)) 
           );
