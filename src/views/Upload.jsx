@@ -78,10 +78,7 @@ class Upload extends Component {
   }
 
   clear(){
-    this.setState({
-      files: [],
-      filesClassification: []
-    });
+    window.location.reload(false);
   }
   render() {
     return (

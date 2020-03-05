@@ -244,7 +244,7 @@ var style = {
 // // // For tables
 // //
 //
-const thArray = ["Name","File Size","Last Modified","Download"];
+const thArray = ["Name","File Size","Last Modified","Delete","Download"];
 const tdArray = [
   ["1", "Dakota Rice", "$36,738", "Niger", "Oud-Turnhout"],
   ["2", "Minerva Hooper", "$23,789", "Curaçao", "Sinaai-Waas"],

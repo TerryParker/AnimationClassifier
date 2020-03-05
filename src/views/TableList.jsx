@@ -19,11 +19,17 @@ class TableList extends Component {
     .catch(err => console.log(err));
 
   }
-  handleClick(key) {
+  handleDownloadClick(key) {
     Storage.get(key)
     .then(result => {window.open(result, '_blank');})
     .catch(err => console.log(err));
-    
+  }
+  handleDeleteClick(key) {
+    Storage.remove(key)
+    .then(result => {
+    })
+    .catch(err => console.log(err))
+    window.location.reload(false);
   }
   render() {
     return (
@@ -48,16 +54,19 @@ class TableList extends Component {
                       </thead>
                       <tbody>
                         {this.state.files.map((prop, key) => {
-                          if (prop.key !== "") {
+                          if (prop.key !== "" && prop.key !== "to_be_classified/") {
+                            console.log(prop.key)
                             return (
                               <tr key={key}>
                                 <td>{prop.key}</td>
                                 <td>{prop.size}</td>
                                 <td key={key}>{prop.lastModified.toString()}</td>
-                                <td><button onClick={(e) => this.handleClick(prop.key)}>Download</button></td>
+                                <td><button onClick={(e) => this.handleDeleteClick(prop.key)}>Delete</button></td>
+                                <td><button onClick={(e) => this.handleDownloadClick(prop.key)}>Download</button></td>
                               </tr>
                             );
                           }else{
+                            console.log(prop.key)
                             return(
                               null
                             );
