@@ -12,6 +12,7 @@ import awsconfig from '../aws-exports';
 import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 import Loader from 'react-loader-spinner';
 import axios from 'axios';
+import * as uuid from 'uuid';
 
 Amplify.configure(awsconfig);
 
@@ -42,19 +43,19 @@ class Upload extends Component {
       //Uploads files once "Update" button is clicked
       var files = this.state.files
       //Loops through all files in file statey
-      for (var i = 0; i < files.length; i++) {
-          console.log(files[i]);
+      for (let i = 0; i < files.length; i++) {
           //This command puts the file into the S3 bucket
           trackPromise( 
-            Storage.put('file'+i+'.png', files[i])
+            Storage.put('to_be_classified/'+uuid.v4()+'.png', files[i])
             .then (result => {
               //Post result.key to lambda 
               trackPromise(
               axios.post('https://mnh5jsx02i.execute-api.us-east-2.amazonaws.com/dev/S3ImageRek', {'body':result.key}).then(response => {
-                console.log(response['data']['body']['Label'][0])
                 var name = response['data']['body']['Label'][0]['Name']
                 var confidence = response['data']['body']['Label'][0]['Confidence']
-                this.setState({filesClassification: [...this.state.filesClassification, {"FileName": result.key, "Name": name, "Confidence": confidence}]});
+                var permFileName = name + '.png'
+                this.moveClassifiedImage({"tempFileName": result.key, "oldFileID": i, "permFileName": permFileName});
+                this.setState({filesClassification: [...this.state.filesClassification, {"FileName": permFileName, "Name": name, "Confidence": confidence}]});
               }).catch(error => {
                 console.log(error.response)
               })
@@ -63,6 +64,24 @@ class Upload extends Component {
             .catch(err => console.log(err)) 
           );
       }
+  }
+  moveClassifiedImage(props){
+    Storage.put(props.permFileName, this.state.files[props.oldFileID])
+    .then(result => {
+    })
+    .catch(err => console.log(err));
+
+    Storage.remove(props.tempFileName)
+    .then(result => {
+    })
+    .catch(err => console.log(err))
+  }
+
+  clear(){
+    this.setState({
+      files: [],
+      filesClassification: []
+    });
   }
   render() {
     return (
@@ -83,7 +102,6 @@ class Upload extends Component {
                         />
                         </FormGroup>
                         <ul>
-                          {console.log(this.state.filesClassification)}
                           {this.state.filesClassification.map((item, key) => {
                             return(<li key={key}>{item.FileName} is {item.Name} with a confidence level of {item.Confidence}</li>)
                           })}
@@ -95,6 +113,10 @@ class Upload extends Component {
                     </Row>
                     <Button bsstyle="info" pullRight fill onClick={(e)=>this.handleClick(e)}>
                       Upload File
+                    </Button>
+                    <br></br>
+                    <Button bsstyle="info" fill onClick={(e)=>this.clear(e)}>
+                      Clear
                     </Button>
                     <div className="clearfix" />
                   </form>
