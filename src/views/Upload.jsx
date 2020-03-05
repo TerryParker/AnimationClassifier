@@ -13,6 +13,7 @@ import { usePromiseTracker, trackPromise } from "react-promise-tracker";
 import Loader from 'react-loader-spinner';
 import axios from 'axios';
 import * as uuid from 'uuid';
+import UploadFileDrop from '../components/FileDrop/FileDrop';
 
 Amplify.configure(awsconfig);
 
@@ -30,15 +31,19 @@ class Upload extends Component {
     super(props);
     this.state = {
       files: [],
-      filesClassification: []
+      filesClassification: [],
+      inputDisabled: false
     };
   }
-  onChange(e) {
-      //Updates state once files are received
-      const filesReceived = e.target.files;
-      this.setState({files: filesReceived})
+  onFileChange(e) {
+    //Updates state once files are received
+    const filesReceived = e.target.files;
+    this.setState({files: filesReceived})
   }
-
+  onFileDropChange(e) {
+    console.log(e)
+    this.setState({files: e})
+  }
   handleClick() {
       //Uploads files once "Update" button is clicked
       var files = this.state.files
@@ -55,7 +60,8 @@ class Upload extends Component {
                 var confidence = response['data']['body']['Label'][0]['Confidence']
                 var permFileName = name + '.png'
                 this.moveClassifiedImage({"tempFileName": result.key, "oldFileID": i, "permFileName": permFileName});
-                this.setState({filesClassification: [...this.state.filesClassification, {"FileName": permFileName, "Name": name, "Confidence": confidence}]});
+                this.setState({filesClassification: [...this.state.filesClassification, {"FileName": permFileName, "Name": name, "Confidence": confidence}], inputDisabled: true});
+                
               }).catch(error => {
                 console.log(error.response)
               })
@@ -80,6 +86,7 @@ class Upload extends Component {
   clear(){
     window.location.reload(false);
   }
+
   render() {
     return (
       <div className="content">
@@ -95,18 +102,31 @@ class Upload extends Component {
                         <input
                             type="file"
                             multiple
-                            onChange={(e) => this.onChange(e)}
+                            onChange={(e) => this.onFileChange(e)}
+                            disabled = {(this.state.inputDisabled)? "disabled" : ""}
                         />
                         </FormGroup>
-                        <ul>
-                          {this.state.filesClassification.map((item, key) => {
-                            return(<li key={key}>{item.FileName} is {item.Name} with a confidence level of {item.Confidence}</li>)
-                          })}
-                        </ul>
                       </Col>
+                    </Row>
+                    <Row>
+                      <Col md={3}>OR</Col>
+                    </Row>
+                    <Row>
+                      <Col md={6}>
+                        <UploadFileDrop fileDropCallback = {(e) => this.onFileDropChange(e)} />
+                      </Col>
+                    </Row>
+                    <Row>
                       <Col md={3}>
                         <LoadingIndicator/>
                       </Col>
+                    </Row>
+                    <Row>
+                      <ul>
+                        {this.state.filesClassification.map((item, key) => {
+                          return(<li key={key}>{item.FileName} is {item.Name} with a confidence level of {item.Confidence}</li>)
+                        })}
+                      </ul>
                     </Row>
                     <Button bsstyle="info" pullRight fill onClick={(e)=>this.handleClick(e)}>
                       Upload File
