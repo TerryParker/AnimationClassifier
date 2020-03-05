@@ -60,7 +60,7 @@ class Upload extends Component {
                 var confidence = response['data']['body']['Label'][0]['Confidence']
                 var permFileName = name + '.png'
                 this.moveClassifiedImage({"tempFileName": result.key, "oldFileID": i, "permFileName": permFileName});
-                this.setState({filesClassification: [...this.state.filesClassification, {"FileName": permFileName, "Name": name, "Confidence": confidence}], inputDisabled: true});
+                this.setState({filesClassification: [...this.state.filesClassification, {"OldFileName": files[i].name, "FileName": permFileName, "Name": name, "Confidence": confidence}], inputDisabled: true});
                 
               }).catch(error => {
                 console.log(error.response)
@@ -88,6 +88,13 @@ class Upload extends Component {
   }
 
   render() {
+    var files = this.state.files
+    var fileArray = [];
+    //Loops through all files in file statey
+    for (let i = 0; i < files.length; i++) {
+      //console.log(files[i].name)
+      fileArray = fileArray.concat(files[i].name)
+    }
     return (
       <div className="content">
         <Container fluid>
@@ -109,11 +116,23 @@ class Upload extends Component {
                       </Col>
                     </Row>
                     <Row>
-                      <Col md={3}>OR</Col>
+                      <Col md={12}>OR</Col>
                     </Row>
                     <Row>
                       <Col md={6}>
                         <UploadFileDrop fileDropCallback = {(e) => this.onFileDropChange(e)} />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md={12}>
+                        Received:
+                        <ul>
+                          {
+                          fileArray.map((item,key) => {
+                            return(<li key={"received "+key}>{item}</li>)
+                          })
+                          }
+                        </ul>
                       </Col>
                     </Row>
                     <Row>
@@ -122,11 +141,16 @@ class Upload extends Component {
                       </Col>
                     </Row>
                     <Row>
-                      <ul>
-                        {this.state.filesClassification.map((item, key) => {
-                          return(<li key={key}>{item.FileName} is {item.Name} with a confidence level of {item.Confidence}</li>)
-                        })}
-                      </ul>
+                      <Col md={12}>
+                        Results:
+                        <ul>
+                          {
+                          this.state.filesClassification.map((item, key) => {
+                            return(<li key={"results "+key}>{item.OldFileName} is {item.Name} with a confidence level of {item.Confidence}. Changed file name to {item.FileName}</li>)
+                          })
+                          }
+                        </ul>
+                      </Col>
                     </Row>
                     <Button bsstyle="info" pullRight fill onClick={(e)=>this.handleClick(e)}>
                       Upload File
