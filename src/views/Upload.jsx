@@ -54,6 +54,7 @@ class Upload extends Component {
             Storage.put('to_be_classified/'+uuid.v4()+'.png', files[i])
             .then (result => {
               //Post result.key to lambda 
+              console.log('est: ' + result)
               trackPromise(
               axios.post('https://mnh5jsx02i.execute-api.us-east-2.amazonaws.com/dev/S3ImageRek', {'body':result.key}).then(response => {
                 var name = response['data']['body']['Label'][0]['Name']
@@ -61,8 +62,10 @@ class Upload extends Component {
                 var permFileName = name + '.png'
                 this.moveClassifiedImage({"tempFileName": result.key, "oldFileID": i, "permFileName": permFileName});
                 this.setState({filesClassification: [...this.state.filesClassification, {"OldFileName": files[i].name, "FileName": permFileName, "Name": name, "Confidence": confidence}], inputDisabled: true});
-                
+                console.log("Rekognition")
+                console.log(response)
               }).catch(error => {
+                console.log("is this undefined?")
                 console.log(error.response)
               })
               )
@@ -146,7 +149,7 @@ class Upload extends Component {
                         <ul>
                           {
                           this.state.filesClassification.map((item, key) => {
-                            return(<li key={"results "+key}>{item.OldFileName} is {item.Name} with a confidence level of {item.Confidence}. Changed file name to {item.FileName}</li>)
+                            return(<li key={"results "+key}>{item.OldFileName} is {item.Name} with a confidence level of {item.Confidence}. Changed  file name to {item.FileName}</li>)
                           })
                           }
                         </ul>
