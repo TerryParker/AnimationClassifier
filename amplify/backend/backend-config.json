@@ -1,30 +1,28 @@
 {
 	"auth": {
-		"s3webpageaac31b6e": {
+		"animationclassifier966329fa": {
 			"service": "Cognito",
 			"providerPlugin": "awscloudformation",
 			"dependsOn": []
 		}
 	},
-	"function": {
-		"S3Trigger73320cdc": {
-			"service": "Lambda",
-			"providerPlugin": "awscloudformation",
-			"build": true
+	"storage": {
+		"s390f3b64f": {
+			"service": "S3",
+			"providerPlugin": "awscloudformation"
 		}
 	},
-	"storage": {
-		"login": {
-			"service": "S3",
+	"function": {
+		"animationclassifierlambda": {
+			"service": "Lambda",
 			"providerPlugin": "awscloudformation",
+			"build": true,
 			"dependsOn": [
 				{
-					"category": "function",
-					"resourceName": "S3Trigger73320cdc",
+					"category": "storage",
+					"resourceName": "s390f3b64f",
 					"attributes": [
-						"Name",
-						"Arn",
-						"LambdaExecutionRole"
+						"BucketName"
 					]
 				}
 			]
