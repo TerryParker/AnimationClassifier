@@ -5,6 +5,7 @@ import TableCard from "../components/Card/TableCard.jsx";
 import { thArray } from "../variables/Variables.jsx";
 import Amplify, { Storage } from 'aws-amplify';
 import awsconfig from '../aws-exports';
+import MaterialTable from 'material-table';
 
 Amplify.configure(awsconfig);
 
@@ -31,20 +32,34 @@ class TableList extends Component {
     .catch(err => console.log(err))
     window.location.reload(false);
   }
+  convertArray(files) {
+    var initialArray = files;
+    var convertedArray = [];
+    convertedArray = initialArray.filter((prop) => {
+      if(prop.key === 'to_be_classified/'){
+        return false; //skip
+      }else{
+        return true;
+      }
+    }).map((prop,key) => {
+        return{name: prop.key, filesize: prop.size, lastmodified: prop.lastModified.toString()}
+    })
+    return convertedArray;
+  }
   render() {
     return (
       <div className="content">
         <Container fluid>
           <Row>
             <Col md={12}>
-              <TableCard
+             {/* <TableCard
                 title="S3 Bucket"
                 category="Here is a subtitle for this table"
                 ctTableFullWidth
                 ctTableResponsive
                 content={
                   <div>
-                    <Table striped hover>
+                     <Table striped hover>
                       <thead>
                         <tr>
                           {thArray.map((prop, key) => {
@@ -55,6 +70,9 @@ class TableList extends Component {
                       <tbody>
                         {this.state.files.map((prop, key) => {
                           if (prop.key !== "" && prop.key !== "to_be_classified/") {
+                          var string = prop.key
+                          
+                          if (prop.key !== "" && !(string.includes("/"))) {
                             console.log(prop.key)
                             return (
                               <tr key={key}>
@@ -65,6 +83,8 @@ class TableList extends Component {
                                 <td><button onClick={(e) => this.handleDownloadClick(prop.key)}>Download</button></td>
                               </tr>
                             );
+                          }else if(string.includes("/")){
+
                           }else{
                             console.log(prop.key)
                             return(
@@ -73,9 +93,17 @@ class TableList extends Component {
                           }
                         })}
                       </tbody>
-                    </Table>
-                  </div>
-                }
+                    </Table> 
+              />"Name","File Size","Last Modified","Delete","Download"*/}
+              <MaterialTable 
+                columns={[
+                  { title: 'Name', field: 'name' },
+                  { title: 'File Size', field: 'filesize' },
+                  { title: 'Last Modified', field: 'lastmodified' },
+                  
+                ]}
+                data={this.convertArray(this.state.files)}
+                title="S3Bucket"
               />
             </Col>
           </Row>
