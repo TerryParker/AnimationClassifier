@@ -62,7 +62,6 @@ class TableList extends Component {
         <Container fluid>
           <Row>
             <Col md={12}>
-              {console.log(this.convertArray(this.state.files))}
               <MaterialTable 
                 columns={[
                   { title: 'Name', field: 'name' },
@@ -78,17 +77,18 @@ class TableList extends Component {
                     icon: 'delete',
                     tooltip: 'Delete',
                     onClick: (event, rowData) => this.handleDeleteClick(rowData.fullPath),
-                    disabled: rowData.filesize === ""
+                    hidden: rowData.filesize === ""
                   }),
                   rowData => ({
-                    icon: 'save',
+                    icon: 'clouddownload',
                     tooltip: 'Download',
                     onClick: (event, rowData) => this.handleDownloadClick(rowData.fullPath),
-                    disabled: rowData.filesize === ""
+                    hidden: rowData.filesize === ""
                   })
                 ]}
                 options={{
-                  actionsColumnIndex: -1
+                  actionsColumnIndex: -1,
+                  pageSize: 10
                 }}
               />
             </Col>
