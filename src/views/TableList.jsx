@@ -33,6 +33,7 @@ class TableList extends Component {
     window.location.reload(false);
   }
   convertArray(files) {
+    var folderId = 0;
     var initialArray = files;
     var convertedArray = [];
     convertedArray = initialArray.filter((prop) => {
@@ -42,7 +43,14 @@ class TableList extends Component {
         return true;
       }
     }).map((prop,key) => {
-        return{name: prop.key, filesize: prop.size, lastmodified: prop.lastModified.toString()}
+        var reversedCurrentName = prop.key.split("").reverse();
+        if(reversedCurrentName[0] === "/"){
+          folderId = key;
+          return{id: key, name: prop.key, filesize: "", lastmodified: prop.lastModified.toString()}
+        }else{
+          var folderAndFile = prop.key.split("/")
+          return{id: key, name: folderAndFile[1], filesize: prop.size, lastmodified: prop.lastModified.toString(), parentId: folderId}
+        }
     })
     return convertedArray;
   }
@@ -95,6 +103,7 @@ class TableList extends Component {
                       </tbody>
                     </Table> 
               />"Name","File Size","Last Modified","Delete","Download"*/}
+              {console.log(this.convertArray(this.state.files))}
               <MaterialTable 
                 columns={[
                   { title: 'Name', field: 'name' },
@@ -103,6 +112,7 @@ class TableList extends Component {
                   
                 ]}
                 data={this.convertArray(this.state.files)}
+                parentChildData={(row, rows) => rows.find(a => a.id === row.parentId)}
                 title="S3Bucket"
               />
             </Col>
