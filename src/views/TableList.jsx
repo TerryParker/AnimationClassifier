@@ -5,6 +5,7 @@ import TableCard from "../components/Card/TableCard.jsx";
 import { thArray } from "../variables/Variables.jsx";
 import Amplify, { Storage } from 'aws-amplify';
 import awsconfig from '../aws-exports';
+import MaterialTable from 'material-table';
 
 Amplify.configure(awsconfig);
 
@@ -25,11 +26,38 @@ class TableList extends Component {
     .catch(err => console.log(err));
   }
   handleDeleteClick(key) {
+    //console.log(key)
     Storage.remove(key)
     .then(result => {
+      //console.log(result)
+      window.location.reload(false);
     })
     .catch(err => console.log(err))
-    window.location.reload(false);
+  }
+  convertArray(files) {
+    var folderId = 0;
+    var initialArray = files;
+    var convertedArray = [];
+    convertedArray = initialArray.filter((prop) => {
+      if(prop.key === 'to_be_classified/'){
+        return false; //skip
+      }else{
+        return true;
+      }
+    }).map((prop,key) => {
+        var reversedCurrentName = prop.key.split("").reverse();
+        if(reversedCurrentName[0] === "/"){
+          folderId = key;
+          return{id: key, name: (prop.key + " "), filesize: "", lastmodified: prop.lastModified.toString()}
+        }else if(prop.key.includes("/")){
+          var folderAndFile = prop.key.split("/")
+          return{id: key, name: folderAndFile[1], filesize: prop.size, lastmodified: prop.lastModified.toString(), parentId: folderId, fullPath: prop.key}
+        }else {
+          return{id: key, name: prop.key, filesize: prop.size, lastmodified: prop.lastModified.toString(), fullPath: prop.key}
+        }
+        
+    })
+    return convertedArray;
   }
   render() {
     return (
@@ -37,45 +65,34 @@ class TableList extends Component {
         <Container fluid>
           <Row>
             <Col md={12}>
-              <TableCard
-                title="S3 Bucket"
-                category="Here is a subtitle for this table"
-                ctTableFullWidth
-                ctTableResponsive
-                content={
-                  <div>
-                    <Table striped hover>
-                      <thead>
-                        <tr>
-                          {thArray.map((prop, key) => {
-                            return <th key={key}>{prop}</th>;
-                          })}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {this.state.files.map((prop, key) => {
-                          if (prop.key !== "" && prop.key !== "to_be_classified/") {
-                            console.log(prop.key)
-                            return (
-                              <tr key={key}>
-                                <td>{prop.key}</td>
-                                <td>{prop.size}</td>
-                                <td key={key}>{prop.lastModified.toString()}</td>
-                                <td><button onClick={(e) => this.handleDeleteClick(prop.key)}>Delete</button></td>
-                                <td><button onClick={(e) => this.handleDownloadClick(prop.key)}>Download</button></td>
-                              </tr>
-                            );
-                          }else{
-                            console.log(prop.key)
-                            return(
-                              null
-                            );
-                          }
-                        })}
-                      </tbody>
-                    </Table>
-                  </div>
-                }
+              <MaterialTable 
+                columns={[
+                  { title: 'Name', field: 'name' },
+                  { title: 'File Size', field: 'filesize' },
+                  { title: 'Last Modified', field: 'lastmodified' }
+                  
+                ]}
+                data={this.convertArray(this.state.files)}
+                parentChildData={(row, rows) => rows.find(a => a.id === row.parentId)}
+                title="S3Bucket"
+                actions={[
+                  rowData => ({
+                    icon: 'delete',
+                    tooltip: 'Delete',
+                    onClick: (event, rowData) => this.handleDeleteClick(rowData.fullPath),
+                    hidden: rowData.filesize === ""
+                  }),
+                  rowData => ({
+                    icon: 'clouddownload',
+                    tooltip: 'Download',
+                    onClick: (event, rowData) => this.handleDownloadClick(rowData.fullPath),
+                    hidden: rowData.filesize === ""
+                  })
+                ]}
+                options={{
+                  actionsColumnIndex: -1,
+                  pageSize: 10
+                }}
               />
             </Col>
           </Row>
