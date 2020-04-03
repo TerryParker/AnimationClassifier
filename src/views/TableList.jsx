@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import { Container, Row, Col, Table } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 
-import TableCard from "../components/Card/TableCard.jsx";
-import { thArray } from "../variables/Variables.jsx";
 import Amplify, { Storage } from 'aws-amplify';
 import awsconfig from '../aws-exports';
 import MaterialTable from 'material-table';

@@ -49,6 +49,17 @@ class Upload extends Component {
       var files = this.state.files
       //Loops through all files in file statey
       for (let i = 0; i < files.length; i++) {
+        console.log(files[i].type);
+        if (files[i].type.includes("video")){
+          trackPromise( 
+            Storage.put('to_be_classified_videos/'+files[i].name, files[i])
+            .then (result => {
+              //Post result.key to lambda 
+              console.log(result)
+            })
+            .catch(err => console.log(err)) 
+          );
+        }
           //This command puts the file into the S3 bucket
           trackPromise( 
             Storage.put('to_be_classified/'+uuid.v4()+'.png', files[i])
