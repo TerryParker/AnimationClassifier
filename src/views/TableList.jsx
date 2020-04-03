@@ -49,10 +49,13 @@ class TableList extends Component {
         if(reversedCurrentName[0] === "/"){
           folderId = key;
           return{id: key, name: (prop.key + " "), filesize: "", lastmodified: prop.lastModified.toString()}
-        }else{
+        }else if(prop.key.includes("/")){
           var folderAndFile = prop.key.split("/")
           return{id: key, name: folderAndFile[1], filesize: prop.size, lastmodified: prop.lastModified.toString(), parentId: folderId, fullPath: prop.key}
+        }else {
+          return{id: key, name: prop.key, filesize: prop.size, lastmodified: prop.lastModified.toString(), fullPath: prop.key}
         }
+        
     })
     return convertedArray;
   }
