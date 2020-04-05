@@ -52,7 +52,7 @@ class Upload extends Component {
         console.log(files[i].type);
         if (files[i].type.includes("video")){
           trackPromise( 
-            Storage.put('to_be_classified_videos/'+files[i].name, files[i])
+            Storage.put('videos/'+files[i].name, files[i])
             .then (result => {
               //Post result.key to lambda 
               console.log(result)
