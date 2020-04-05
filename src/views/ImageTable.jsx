@@ -7,7 +7,7 @@ import MaterialTable from 'material-table';
 
 Amplify.configure(awsconfig);
 
-class TableList extends Component {
+class ImageTable extends Component {
   constructor(props) {
     super(props);
     this.state = {files: []};
@@ -100,4 +100,4 @@ class TableList extends Component {
   }
 }
 
-export default TableList;
+export default ImageTable;
