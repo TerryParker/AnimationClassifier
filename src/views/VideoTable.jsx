@@ -6,12 +6,11 @@ import { Container, Row, Col } from "react-bootstrap";
 import MaterialTable from 'material-table';
 
 const AWS = require('aws-sdk/global');
-
-AWS.config.update({ accessKeyId: 'AKIAYRX2VKNOSP2I5SO5', secretAccessKey: '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', region: 'us-east-1' });
+AWS.config.update({ accessKeyId: process.env.REACT_APP_API_KEY, secretAccessKey: process.env.REACT_APP_SECRET_KEY, region: process.env.REACT_APP_VIDEO_BUCKET_REGION });
 const s3 = new AWS.S3();
 
 const params = {
-  Bucket: 'seefood0b3b78c310d84d9884ea5b982c929e0c220904-dev',
+  Bucket: process.env.REACT_APP_VIDEO_BUCKET,
   Delimiter: '',
   Prefix: '',
 };
@@ -19,7 +18,10 @@ const params = {
 class VideoTable extends Component {
   constructor(props) {
     super(props);
-    this.state = {files: []};
+    this.state = {
+      files: [],
+      folders: []
+    };
   }
   componentDidMount() {
     s3.listObjectsV2(params, (err, data) => {
@@ -28,7 +30,6 @@ class VideoTable extends Component {
     })
   }
   convertArray(files) {
-    var folderId = 0;
     var initialArray = files;
     var convertedArray = [];
     convertedArray = initialArray.filter((prop) => {
@@ -49,8 +50,26 @@ class VideoTable extends Component {
       // }else {
       //   return{id: key, name: prop.Key, filesize: prop.Size, lastmodified: prop.LastModified.toString(), fullPath: prop.Key}
       // }
-      return{id: key, name: prop.Key, filesize: prop.Size, lastmodified: prop.LastModified.toString()}
-        
+      //***************************************************************
+      //Get all folders
+      //***************************************************************
+      if(prop.Key.includes("/")){
+        console.log(prop.Key)
+        var folderAndFile = prop.Key.split("/")
+        var currentFolder = folderAndFile[0]
+        var folders = this.state.folders
+        console.log(folders)
+        if (!(folders.includes(currentFolder))){
+          var joined = this.state.folders.concat(currentFolder);
+          this.setState({folders: joined})
+        }
+      }
+      //***************************************************************
+      folders = this.state.folders
+      if(prop.Key.includes("/")){
+        if(folders.includes(currentFolder))
+        return{id: key, name: prop.Key, filesize: prop.Size, lastmodified: prop.LastModified.toString()}
+      }
     })
     return convertedArray;
   }
