@@ -1,7 +1,7 @@
 import Dashboard from "./views/Dashboard.jsx";
 import Upload from "./views/Upload.jsx";
 import ImageTable from "./views/ImageTable.jsx";
-
+import VideoTable from "./views/VideoTable.jsx";
 
 const dashboardRoutes = [
   {
@@ -29,7 +29,7 @@ const dashboardRoutes = [
     path: "/videotable",
     name: "Video Table",
     icon: "pe-7s-note2",
-    component: ImageTable,
+    component: VideoTable,
     layout: "/admin"
   }
 ];

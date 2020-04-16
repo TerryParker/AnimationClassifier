@@ -1,11 +1,20 @@
 import React, { Component } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 
-import Amplify, { Storage } from 'aws-amplify';
-import awsconfig from '../aws-exports';
+// import Amplify, { Storage } from 'aws-amplify';
+// import awsconfig from '../aws-exports';
 import MaterialTable from 'material-table';
 
-Amplify.configure(awsconfig);
+const AWS = require('aws-sdk/global');
+
+AWS.config.update({ accessKeyId: 'AKIAYRX2VKNOSP2I5SO5', secretAccessKey: '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', region: 'us-east-1' });
+const s3 = new AWS.S3();
+
+const params = {
+  Bucket: 'seefood0b3b78c310d84d9884ea5b982c929e0c220904-dev',
+  Delimiter: '',
+  Prefix: '',
+};
 
 class VideoTable extends Component {
   constructor(props) {
@@ -13,24 +22,10 @@ class VideoTable extends Component {
     this.state = {files: []};
   }
   componentDidMount() {
-    Storage.list('')
-    .then(result => {this.setState({files: result})})
-    .catch(err => console.log(err));
-
-  }
-  handleDownloadClick(key) {
-    Storage.get(key)
-    .then(result => {window.open(result, '_blank');})
-    .catch(err => console.log(err));
-  }
-  handleDeleteClick(key) {
-    //console.log(key)
-    Storage.remove(key)
-    .then(result => {
-      //console.log(result)
-      window.location.reload(false);
+    s3.listObjectsV2(params, (err, data) => {
+      if (err) throw err;
+      this.setState({files: data.Contents})
     })
-    .catch(err => console.log(err))
   }
   convertArray(files) {
     var folderId = 0;
@@ -43,16 +38,18 @@ class VideoTable extends Component {
         return true;
       }
     }).map((prop,key) => {
-        var reversedCurrentName = prop.key.split("").reverse();
-        if(reversedCurrentName[0] === "/"){
-          folderId = key;
-          return{id: key, name: (prop.key + " "), filesize: "", lastmodified: prop.lastModified.toString()}
-        }else if(prop.key.includes("/")){
-          var folderAndFile = prop.key.split("/")
-          return{id: key, name: folderAndFile[1], filesize: prop.size, lastmodified: prop.lastModified.toString(), parentId: folderId, fullPath: prop.key}
-        }else {
-          return{id: key, name: prop.key, filesize: prop.size, lastmodified: prop.lastModified.toString(), fullPath: prop.key}
-        }
+      //console.log(prop)
+      // var reversedCurrentName = prop.Key.split("").reverse();
+      // if(reversedCurrentName[0] === "/"){
+      //   folderId = key;
+      //   return{id: key, name: (prop.Key + " "), filesize: "", lastmodified: prop.LastModified.toString()}
+      // }else if(prop.Key.includes("/")){
+      //   var folderAndFile = prop.Key.split("/")
+      //   return{id: key, name: folderAndFile[1], filesize: prop.Size, lastmodified: prop.LastModified.toString(), parentId: folderId, fullPath: prop.Key}
+      // }else {
+      //   return{id: key, name: prop.Key, filesize: prop.Size, lastmodified: prop.LastModified.toString(), fullPath: prop.Key}
+      // }
+      return{id: key, name: prop.Key, filesize: prop.Size, lastmodified: prop.LastModified.toString()}
         
     })
     return convertedArray;
@@ -72,21 +69,7 @@ class VideoTable extends Component {
                 ]}
                 data={this.convertArray(this.state.files)}
                 parentChildData={(row, rows) => rows.find(a => a.id === row.parentId)}
-                title="S3Bucket"
-                actions={[
-                  rowData => ({
-                    icon: 'delete',
-                    tooltip: 'Delete',
-                    onClick: (event, rowData) => this.handleDeleteClick(rowData.fullPath),
-                    hidden: rowData.filesize === ""
-                  }),
-                  rowData => ({
-                    icon: 'clouddownload',
-                    tooltip: 'Download',
-                    onClick: (event, rowData) => this.handleDownloadClick(rowData.fullPath),
-                    hidden: rowData.filesize === ""
-                  })
-                ]}
+                title=""
                 options={{
                   actionsColumnIndex: -1,
                   pageSize: 10
