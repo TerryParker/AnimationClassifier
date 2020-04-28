@@ -12,11 +12,11 @@ class ImageTable extends Component {
     super(props);
     this.state = {files: []};
   }
+
   componentDidMount() {
     Storage.list('')
     .then(result => {this.setState({files: result})})
     .catch(err => console.log(err));
-
   }
   handleDownloadClick(key) {
     Storage.get(key)
@@ -37,7 +37,9 @@ class ImageTable extends Component {
     var initialArray = files;
     var convertedArray = [];
     convertedArray = initialArray.filter((prop) => {
-      if(prop.key === 'to_be_classified/'){
+      if(prop.key.includes('to_be_classified/')){
+        return false; //skip
+      }else if(prop.key.includes('videos/')){
         return false; //skip
       }else{
         return true;

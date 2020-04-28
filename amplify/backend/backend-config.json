@@ -1,31 +1,15 @@
 {
 	"auth": {
-		"animationclassifier966329fa": {
+		"animationclassifier49b5c96b": {
 			"service": "Cognito",
 			"providerPlugin": "awscloudformation",
 			"dependsOn": []
 		}
 	},
 	"storage": {
-		"s390f3b64f": {
+		"s3a21f4c58": {
 			"service": "S3",
 			"providerPlugin": "awscloudformation"
-		}
-	},
-	"function": {
-		"animationclassifierlambda": {
-			"service": "Lambda",
-			"providerPlugin": "awscloudformation",
-			"build": true,
-			"dependsOn": [
-				{
-					"category": "storage",
-					"resourceName": "s390f3b64f",
-					"attributes": [
-						"BucketName"
-					]
-				}
-			]
 		}
 	}
 }
