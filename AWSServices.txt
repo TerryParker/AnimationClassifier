@@ -1,0 +1,10 @@
+API Gateway 
+Lambda
+S3
+Recognition
+CloudWatch
+VPC
+Sagemaker?
+IAM
+Cognito
+Custom Labels

@@ -1,24 +1,22 @@
 import React, { Component } from "react";
-import { Container, Row, Col, Table } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 
-import TableCard from "../components/Card/TableCard.jsx";
-import { thArray } from "../variables/Variables.jsx";
 import Amplify, { Storage } from 'aws-amplify';
 import awsconfig from '../aws-exports';
 import MaterialTable from 'material-table';
 
 Amplify.configure(awsconfig);
 
-class TableList extends Component {
+class ImageTable extends Component {
   constructor(props) {
     super(props);
     this.state = {files: []};
   }
+
   componentDidMount() {
     Storage.list('')
     .then(result => {this.setState({files: result})})
     .catch(err => console.log(err));
-
   }
   handleDownloadClick(key) {
     Storage.get(key)
@@ -39,7 +37,9 @@ class TableList extends Component {
     var initialArray = files;
     var convertedArray = [];
     convertedArray = initialArray.filter((prop) => {
-      if(prop.key === 'to_be_classified/'){
+      if(prop.key.includes('to_be_classified/')){
+        return false; //skip
+      }else if(prop.key.includes('videos/')){
         return false; //skip
       }else{
         return true;
@@ -102,4 +102,4 @@ class TableList extends Component {
   }
 }
 
-export default TableList;
+export default ImageTable;

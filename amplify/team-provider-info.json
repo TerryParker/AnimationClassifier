@@ -1,19 +1,19 @@
 {
     "dev": {
         "awscloudformation": {
-            "AuthRoleName": "amplify-animationclassifier-dev-181354-authRole",
-            "UnauthRoleArn": "arn:aws:iam::789968483738:role/amplify-animationclassifier-dev-181354-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::789968483738:role/amplify-animationclassifier-dev-181354-authRole",
-            "Region": "us-east-2",
-            "DeploymentBucketName": "amplify-animationclassifier-dev-181354-deployment",
-            "UnauthRoleName": "amplify-animationclassifier-dev-181354-unauthRole",
-            "StackName": "amplify-animationclassifier-dev-181354",
-            "StackId": "arn:aws:cloudformation:us-east-2:789968483738:stack/amplify-animationclassifier-dev-181354/df78f800-5ce3-11ea-8ed6-0ad7a569cb8c",
-            "AmplifyAppId": "d31ck4evj5jz4e"
+            "AuthRoleName": "amplify-animationclassifier-dev-225904-authRole",
+            "UnauthRoleArn": "arn:aws:iam::919678054757:role/amplify-animationclassifier-dev-225904-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::919678054757:role/amplify-animationclassifier-dev-225904-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "amplify-animationclassifier-dev-225904-deployment",
+            "UnauthRoleName": "amplify-animationclassifier-dev-225904-unauthRole",
+            "StackName": "amplify-animationclassifier-dev-225904",
+            "StackId": "arn:aws:cloudformation:us-east-1:919678054757:stack/amplify-animationclassifier-dev-225904/1b8b9930-86a9-11ea-bca0-12a640cb526e",
+            "AmplifyAppId": "d23vgto2c3hrz9"
         },
         "categories": {
             "auth": {
-                "animationclassifier966329fa": {}
+                "animationclassifier49b5c96b": {}
             }
         }
     }

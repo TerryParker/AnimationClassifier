@@ -32,9 +32,11 @@ class Upload extends Component {
     this.state = {
       files: [],
       filesClassification: [],
+      videosClassification: [],
       inputDisabled: false
     };
   }
+
   onFileChange(e) {
     //Updates state once files are received
     const filesReceived = e.target.files;
@@ -47,8 +49,29 @@ class Upload extends Component {
   handleClick() {
       //Uploads files once "Update" button is clicked
       var files = this.state.files
-      //Loops through all files in file statey
+      //Loops through all files in file state
       for (let i = 0; i < files.length; i++) {
+        console.log(files[i].type);
+        if (files[i].type.includes("video")){
+          trackPromise( 
+            Storage.put('videos/'+files[i].name, files[i])
+            .then (result => {
+              //Post result.key to lambda 
+              trackPromise(
+              axios.post('https://2gy6g17rh0.execute-api.us-east-1.amazonaws.com/test/ffmpeg-call', result.key).then(response => {
+                console.log(response)
+                var name = response['data']
+                this.setState({videosClassification: [...this.state.videosClassification, {"response":name}]});
+              }).catch(error => {
+                console.log("is this undefined?")
+                console.log(error.response)
+              })
+              )
+              console.log(result)
+            })
+            .catch(err => console.log(err)) 
+          );
+        }else{
           //This command puts the file into the S3 bucket
           trackPromise( 
             Storage.put('to_be_classified/'+uuid.v4()+'.png', files[i])
@@ -56,22 +79,28 @@ class Upload extends Component {
               //Post result.key to lambda 
               console.log('est: ' + result)
               trackPromise(
-              axios.post('https://mnh5jsx02i.execute-api.us-east-2.amazonaws.com/dev/S3ImageRek', {'body':result.key}).then(response => {
-                var name = response['data']['body']['Label'][0]['Name']
-                var confidence = response['data']['body']['Label'][0]['Confidence']
-                var permFileName = name + '.png'
-                this.moveClassifiedImage({"tempFileName": result.key, "oldFileID": i, "permFileName": permFileName});
-                this.setState({filesClassification: [...this.state.filesClassification, {"OldFileName": files[i].name, "FileName": permFileName, "Name": name, "Confidence": confidence}], inputDisabled: true});
-                console.log("Rekognition")
-                console.log(response)
-              }).catch(error => {
-                console.log("is this undefined?")
-                console.log(error.response)
-              })
-              )
+                axios.post('https://64qzr604l8.execute-api.us-east-1.amazonaws.com/image_test/images', result.key).then(response => {
+                  console.log(response)
+                  console.log(response['data'])
+                  var data = response['data']
+                  console.log("data")
+                  console.log(data)
+                  var name = data['Name']
+                  var confidence = data['Confidence']
+                  var permFileName = name + '.png'
+                  this.moveClassifiedImage({"tempFileName": result.key, "oldFileID": i, "permFileName": permFileName});
+                  this.setState({filesClassification: [...this.state.filesClassification, {"OldFileName": files[i].name, "FileName": permFileName, "Name": name, "Confidence": confidence}], inputDisabled: true});
+                  console.log("Rekognition")
+                  console.log(response)
+                }).catch(error => {
+                  console.log("error")
+                  console.log(error)
+                })
+                )
             })
             .catch(err => console.log(err)) 
           );
+        }
       }
   }
   moveClassifiedImage(props){
@@ -150,6 +179,15 @@ class Upload extends Component {
                           {
                           this.state.filesClassification.map((item, key) => {
                             return(<li key={"results "+key}>{item.OldFileName} is {item.Name} with a confidence level of {item.Confidence}. Changed  file name to {item.FileName}</li>)
+                          })
+                          }
+                        </ul>
+                        {console.log(this.state.videosClassification)}
+                        <ul>
+                          {
+                          this.state.videosClassification.map((item, key) => {
+                            console.log(item)
+                            return(<li key={"results "+key}>{item.response}</li>)
                           })
                           }
                         </ul>
